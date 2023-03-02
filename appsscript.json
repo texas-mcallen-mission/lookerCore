@@ -9,7 +9,7 @@
         "description": "Alternative Google Sheets connector.",
         "addOnUrl":"https://github.com/texas-mcallen-mission/lookerCore",
         "supportUrl":"https://github.com/texas-mcallen-mission/lookerCore",
-        "feeType":"FREE"
+        "feeType":["FREE"]
     },
     "exceptionLogging": "STACKDRIVER",
     "runtimeVersion": "V8"
