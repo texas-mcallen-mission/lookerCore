@@ -1,0 +1,16 @@
+{
+    "timeZone": "America/New_York",
+    "dependencies": {},
+    "dataStudio":{
+        "name":"sheetCore connector",
+        "logoUrl":"https://avatars.githubusercontent.com/u/98476013",
+        "company": "Texas McAllen Mission",
+        "companyUrl": "churchofjesuschrist.org",
+        "description": "Alternative Google Sheets connector.",
+        "addOnUrl":"https://github.com/texas-mcallen-mission/lookerCore",
+        "supportUrl":"https://github.com/texas-mcallen-mission/lookerCore",
+        "feeType":"FREE"
+    },
+    "exceptionLogging": "STACKDRIVER",
+    "runtimeVersion": "V8"
+}
