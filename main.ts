@@ -25,7 +25,7 @@ function getAuthType() {
 function getConfig() {
     // https://developers.google.com/looker-studio/connector/reference#configtype
     const config = cc.getConfig();
-    const sheetCoreConfigDemo = "timestamp:0,\nareaId:1\n"
+    const sheetCoreConfigDemo = "{\n    timestamp:0,\n    areaId:1\n}"
     config.newInfo().setId('setup-main').setText("Single Sheet Setup");
     config.newTextInput().setId("sheetId").setName("Spreadsheet ID").setHelpText("The last string of characters in the URL for your spreadsheet").setPlaceholder("25-lOnG-BuNcHa-CH4rAct3RZ");
     config.newTextInput().setId("tabName").setName("Spreadsheet Tab Name").setHelpText("The name of the tab you're trying to access").setPlaceholder("demoData")
@@ -148,7 +148,17 @@ function getData(request:getDataRequest) {
     //         return field.name
     //     })
     // )
+    let columnConfig: columnConfig
+    // the JSON parser is a little bit finicky.  Adding error state for it.
+    try {
+        columnConfig = JSON.parse(configData["sheetCoreColumns"])
+    } catch (error) {
+        cc.newUserError().setDebugText("JSON Parsing Error:" + error).setText("JSON Parsing Error: Please note that JSON spec requires double quotes around all keys").throwException()
 
+    }
+    let softColumns:boolean = Boolean(columnConfig["use_softColumns"])
+    
+    // create SheetData Class
     try {
 
         let sheetConfig: sheetDataEntry = {
@@ -156,8 +166,8 @@ function getData(request:getDataRequest) {
             sheetId:configData["sheetId"],
             tabName: configData["tabName"],
             headerRow: +configData["headerRow"],
-            initialColumnOrder: undefined,
-            includeSoftcodedColumns: false
+            initialColumnOrder: columnConfig,
+            includeSoftcodedColumns: softColumns
         }
 
         dataSheet = new SheetData(new RawSheetData(sheetConfig))
