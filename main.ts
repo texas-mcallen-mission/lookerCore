@@ -15,9 +15,9 @@ const dsAggTypes = cc.AggregationType
 // pushFest
 function _getField(fields: GoogleAppsScript.Data_Studio.Fields, fieldId) {
     switch (fieldId) {
-        case 'kiDate':
+        case 'thirdDimension':
             fields.newDimension()
-                .setId('kiDate')
+                .setId('thirdDimension')
                 .setType(dsTypes.TEXT);
             break;
         case 'areaId':
@@ -38,12 +38,12 @@ function _getField(fields: GoogleAppsScript.Data_Studio.Fields, fieldId) {
 
 function getSchema(request) {
     let fields = cc.getFields()
-    let columns = ['kiDate', 'areaId', 'np']
+    let columns = ['thirdDimension', 'areaId', 'np']
     columns.forEach(fieldId => {
         fields = _getField(fields, fieldId)
     })
     fields.setDefaultMetric('np')
-    fields.setDefaultDimension('kiDate')
+    fields.setDefaultDimension('thirdDimension')
     return {
         'schema':fields.build()
     }
@@ -55,7 +55,7 @@ function generateData(): kiDataEntry[]{
         const entry = {
             "areaId": "A" + Math.floor(Math.random() * 10000),
             "np": Math.floor(Math.random() * 10),
-            "kiDate": Math.floor(Math.random() * 1000)+"-01-01"
+            "thirdDimension": "F"+Math.floor(Math.random() * 1000)
         }
     }
     return output
