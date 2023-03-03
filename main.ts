@@ -48,74 +48,9 @@ function getSchema(request) {
 
 }
 
-// const test_request: getDataRequest = {
-//     configParams: {
-//         sheetId: "REPLACE_AT_RUNTIME",
-//         tabName: "data",
-//         headerRow: 0,
-//         use_softColumns: true,
-//         sheetCoreColumns: "{areaName: 0,log: 1,areaEmail: 2,isDuplicate: 3,formTimestamp: 4,areaID: 5,kiDate: 6,np: 7,sa: 8,bd: 9,bc: 10,rca: 11,rc: 12,cki: 13}"
-//     },
-//     scriptParams: {
-//         sampleExtraction: false,
-//         lastRefresh: ''
-//     },
-//     dateRange: {
-//         startDate: '',
-//         endDate: ''
-//     },
-//         fields: getFields().build(),
-//         // dimensionsFilters: []
-// }
-
-// function test_getSchema() {
-//     const request: getDataRequest = {
-//         configParams: {
-//             sheetId: "REPLACE_AT_RUNTIME",
-//             tabName: "data",
-//             headerRow: 0,
-//             use_softColumns: true,
-//             sheetCoreColumns: "{areaName: 0,log: 1,areaEmail: 2,isDuplicate: 3,formTimestamp: 4,areaID: 5,kiDate: 6,np: 7,sa: 8,bd: 9,bc: 10,rca: 11,rc: 12,cki: 13}"
-//         },
-//         scriptParams: {
-//             sampleExtraction: false,
-//             lastRefresh: ''
-//         },
-//         dateRange: {
-//             startDate: '',
-//             endDate: ''
-//         },
-//         // fields: [],
-//         // dimensionsFilters: []
-//     }
-//     const schema = getSchema(request).schema
-
-// }
-
-// function testGetData() {
-//     const request: getDataRequest = {
-//         configParams: {
-//             sheetId: "REPLACE_AT_RUNTIME",
-//             tabName: "data",
-//             headerRow: 0,
-//             use_softColumns: true,
-//             sheetCoreColumns: "{areaName: 0,log: 1,areaEmail: 2,isDuplicate: 3,formTimestamp: 4,areaID: 5,kiDate: 6,np: 7,sa: 8,bd: 9,bc: 10,rca: 11,rc: 12,cki: 13}"
-//         },
-//         scriptParams: {
-//             sampleExtraction: false,
-//             lastRefresh: ''
-//         },
-//         dateRange: {
-//             startDate: '',
-//             endDate: ''
-//         },
-//         // fields: [],
-//         // dimensionsFilters: []
-//     }
-//     const dataBack = getData(request)
-//     console.log(dataBack)
-//     console.log(dataBack.data)
-// }
+function isAdminUser() {
+    return true
+}
 
 function testGetData() {
     console.log(getSchema().schema);
@@ -153,7 +88,8 @@ function getData(request:getDataRequest) {
     try {
         columnConfig = JSON.parse(configData["sheetCoreColumns"])
     } catch (error) {
-        cc.newUserError().setDebugText("JSON Parsing Error:" + error).setText("JSON Parsing Error: Please note that JSON spec requires double quotes around all keys").throwException()
+        console.error(configData["sheetCoreColumns"])
+        cc.newUserError().setDebugText("JSON Parsing Error:" + error).setText("JSON Parsing Error: Please note that JSON spec requires double quotes around all keys\n"+error).throwException()
 
     }
     let softColumns:boolean = Boolean(columnConfig["use_softColumns"])
