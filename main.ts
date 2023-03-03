@@ -8,6 +8,94 @@
 
 const cc = DataStudioApp.createCommunityConnector();
 
+const dsTypes = cc.FieldType
+const dsAggTypes = cc.AggregationType
+
+
+
+function _getField(fields: GoogleAppsScript.Data_Studio.Fields, fieldId) {
+    switch (fieldId) {
+        case 'kiDate':
+            fields.newDimension()
+                .setId('kiDate')
+                .setType(dsTypes.TEXT);
+            break;
+        case 'areaId':
+            fields.newDimension()
+                .setId('areaId')
+                .setType(dsTypes.TEXT);
+            break;
+        case 'np':
+            fields.newDimension()
+                .setId('np')
+                .setType(dsTypes.NUMBER);
+            break;
+        default:
+            throw new Error('invalid fieldId: ${fieldId}');
+    }
+    return fields;
+}
+
+function getSchema(request) {
+    let fields = cc.getFields()
+    let columns = ['kiDate', 'areaId', 'np']
+    columns.forEach(fieldId => {
+        fields = _getField(fields, fieldId)
+    })
+    fields.setDefaultMetric('np')
+    fields.setDefaultDimension('kiDate')
+    return {
+        'schema':fields.build()
+    }
+}
+
+function generateData(): kiDataEntry[]{
+    const output: kiDataEntry[] = []
+    for (let i = 0; i < 20; i++){
+        const entry = {
+            "areaId": "A" + Math.floor(Math.random() * 10000),
+            "np": Math.floor(Math.random() * 10),
+            "kiDate": Math.floor(Math.random() * 1000)+"-01-01"
+        }
+    }
+    return output
+}
+
+
+
+function getData(request: getDataRequest) {
+    //following a guide from Medium.  Wish me luck.
+    // https://medium.com/analytics-vidhya/creating-a-google-data-studio-connector-da7b35c6f8d5
+    let fields = cc.getFields();
+    const fieldIds = request.fields.map(field => field.name);
+    fieldIds.forEach(fieldId => {
+        fields = _getField(fields, fieldId);
+    });
+
+    const kiData = generateData();
+    let dataOut: (string | number)[][] = []
+    
+    for(let entry of kiData){
+        const output = []
+        for (let key of fieldIds) {
+            output.push(entry[key])
+        }
+        dataOut.push(output)
+
+    }
+
+    // const testOutput = []
+
+    return {
+        schema: fields.build(),
+        rows: dataOut
+    }
+
+
+}
+
+
+
 /*
     These are the functions Looker Studio itself calls:
     getAuthType sets up authentication (I think this might need some changes to use Sheets?)
@@ -39,7 +127,7 @@ function getConfig() {
     
 // }
 
-function getSchema(request) {
+function getSchemaOld(request) {
     // https://developers.google.com/looker-studio/connector/reference#getschema
     
     return {
@@ -53,7 +141,7 @@ function isAdminUser() {
 }
 
 function testGetData() {
-    console.log(getSchema().schema);
+    console.log(getSchemaOld().schema);
     console.log(cc.getFields().build());
     const requestPartial = {
         configParams: {
@@ -68,7 +156,11 @@ function testGetData() {
     console.log(test);
 }
 
-function getData(request:getDataRequest) {
+
+
+
+
+function getDataOld(request:getDataRequest) {
     // first step: load up config data
     const configData = request.configParams
     // const configDataOutput: string = "currentConfig:\n" + JSON.stringify(JSON.parse(configData["sheetCoreColumns"])) + "use softcoded columns:" + configData["use_softColumns"]
