@@ -26,9 +26,9 @@ function _getField(fields: GoogleAppsScript.Data_Studio.Fields, fieldId) {
                 .setType(dsTypes.TEXT);
             break;
         case 'np':
-            fields.newDimension()
+            fields.newMetric()
                 .setId('np')
-                .setType(dsTypes.NUMBER);
+                .setType(dsTypes.NUMBER).setAggregation(dsAggTypes.SUM)
             break;
         default:
             throw new Error('invalid fieldId: ${fieldId}');
