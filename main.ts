@@ -57,6 +57,7 @@ function generateData(): kiDataEntry[]{
             "np": Math.floor(Math.random() * 10),
             "thirdDimension": "F"+Math.floor(Math.random() * 1000)
         }
+        output.push(entry)
     }
     return output
 }
@@ -83,6 +84,8 @@ function getData(request: getDataRequest) {
         dataOut.push(output)
 
     }
+    console.log(fieldIds)
+    console.log(Object.keys(kiData[0]))
 
     // const testOutput = []
 
