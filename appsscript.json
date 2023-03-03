@@ -12,5 +12,9 @@
         "feeType":["FREE"]
     },
     "exceptionLogging": "STACKDRIVER",
-    "runtimeVersion": "V8"
+    "runtimeVersion": "V8",
+    "oauthScopes": [
+        "https://www.googleapis.com/auth/drive.readonly",
+        "https://www.googleapis.com/auth/spreadsheets"
+    ]
 }

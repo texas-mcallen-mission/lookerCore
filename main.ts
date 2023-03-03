@@ -117,6 +117,22 @@ function getSchema(request) {
 //     console.log(dataBack.data)
 // }
 
+function testGetData() {
+    console.log(getSchema().schema);
+    console.log(cc.getFields().build());
+    const requestPartial = {
+        configParams: {
+            sheetId: "REPLACE_AT_RUNTIME",
+            tabName: "data",
+            headerRow: 0,
+            use_softColumns: true,
+            sheetCoreColumns: "{areaName: 0,log: 1,areaEmail: 2,isDuplicate: 3,formTimestamp: 4,areaID: 5,kiDate: 6,np: 7,sa: 8,bd: 9,bc: 10,rca: 11,rc: 12,cki: 13}"
+        },
+    };
+    const test = getData(requestPartial);
+    console.log(test);
+}
+
 function getData(request:getDataRequest) {
     // first step: load up config data
     const configData = request.configParams
