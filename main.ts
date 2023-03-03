@@ -67,6 +67,7 @@ function generateData(): kiDataEntry[]{
 function getData(request: getDataRequest) {
     //following a guide from Medium.  Wish me luck.
     // https://medium.com/analytics-vidhya/creating-a-google-data-studio-connector-da7b35c6f8d5
+    // https://developers.google.com/looker-studio/connector/reference#default
     let fields = cc.getFields();
     const fieldIds = request.fields.map(field => field.name);
     fieldIds.forEach(fieldId => {
@@ -74,19 +75,19 @@ function getData(request: getDataRequest) {
     });
 
     const kiData = generateData();
-    let dataOut: (string | number)[][] = []
+    let dataOut: { values: (string | number)[] }[] = []
     
     for(let entry of kiData){
         const output = []
         for (let key of fieldIds) {
             output.push(entry[key])
         }
-        dataOut.push(output)
+        dataOut.push({ values: output })
 
     }
     console.log(fieldIds)
     console.log(Object.keys(kiData[0]))
-
+    console.log
     // const testOutput = []
 
     return {
