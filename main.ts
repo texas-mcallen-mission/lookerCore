@@ -12,7 +12,7 @@ const dsTypes = cc.FieldType
 const dsAggTypes = cc.AggregationType
 
 
-
+// pushFest
 function _getField(fields: GoogleAppsScript.Data_Studio.Fields, fieldId) {
     switch (fieldId) {
         case 'kiDate':
@@ -88,7 +88,8 @@ function getData(request: getDataRequest) {
 
     return {
         schema: fields.build(),
-        rows: dataOut
+        rows: dataOut,
+        data:dataOut
     }
 
 
