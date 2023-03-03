@@ -88,14 +88,14 @@ function getData(request:getDataRequest) {
         cc.newUserError().setDebugText("loading data failed").setText("Pulling from Sheets failed.").throwException()
     }
 
-    let outData: kiDataEntry[] = []
+    let outData: (string|number)[][] = []
     const keysToKeep = ["kiDate","np"]
     for (const entry of rawData) {
-        let output: kiDataEntry = {}
+        let row:(string|number)[] = []
         for (const key of keysToKeep) {
-            output[key] = entry[key]
+            row.push(entry[key])
         }
-        outData.push(output)
+        outData.push(row)
     }
 
     return {
