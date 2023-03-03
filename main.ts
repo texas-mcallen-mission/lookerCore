@@ -50,7 +50,8 @@ function getSchema(request) {
 function getData(request:getDataRequest) {
     // first step: load up config data
     const configData = request.configParams
-    cc.newUserError().setDebugText("DU_USER:" + JSON.stringify(configData)).setText("current config").throwException()
+    const configDataOutput:string = "currentConfig:\n" + JSON.stringify(configData)
+    cc.newUserError().setDebugText("DU_USER:" + JSON.stringify(configData)).setText(configDataOutput).throwException()
     
     
 }
