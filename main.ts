@@ -52,7 +52,7 @@ function getSchema(request) {
 function getData(request:getDataRequest) {
     // first step: load up config data
     const configData = request.configParams
-    const configDataOutput: string = "currentConfig:\n" + JSON.stringify(JSON.parse(configData["sheetCoreColumns"])) + "use softcoded columns:" + configData["use_softColumns"]
+    // const configDataOutput: string = "currentConfig:\n" + JSON.stringify(JSON.parse(configData["sheetCoreColumns"])) + "use softcoded columns:" + configData["use_softColumns"]
     // cc.newUserError().setDebugText("DU_USER:" + JSON.stringify(configData)).setText(configDataOutput).throwException()
     
     let dataSheet:SheetData
