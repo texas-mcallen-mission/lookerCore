@@ -28,6 +28,7 @@ function getConfig() {
     const sheetCoreConfigDemo = "timestamp:0,\nareaId:1\n"
     config.newInfo().setId('setup-main').setText("Single Sheet Setup");
     config.newTextInput().setId("sheetId").setName("Spreadsheet ID").setHelpText("The last string of characters in the URL for your spreadsheet").setPlaceholder("25-lOnG-BuNcHa-CH4rAct3RZ");
+    config.newTextInput().setId("tabName").setName("Spreadsheet Tab Name").setHelpText("The name of the tab you're trying to access").setPlaceholder("demoData")
     config.newTextArea().setId("sheetCoreColumns").setName("SheetCore Column Config").setHelpText("your sheetCore columnConfig").setPlaceholder(sheetCoreConfigDemo)
     return config.build();
 }
