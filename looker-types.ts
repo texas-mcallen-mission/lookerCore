@@ -9,11 +9,7 @@ interface getDataRequest {
         "startDate": string,
         "endDate": string;
     },
-    "fields": [
-        {
-            "name": string;
-        }
-    ],
+    "fields": fieldEntry[]
     "dimensionsFilters": [
         [{
             "fieldName": string,
@@ -23,6 +19,8 @@ interface getDataRequest {
         }]
     ];
 }
+
+type fieldEntry = {"name":string}
 
 
 
