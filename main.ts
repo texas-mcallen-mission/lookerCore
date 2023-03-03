@@ -143,11 +143,11 @@ function getData(request:getDataRequest) {
 
 
     // I literally have no idea what this is doing...
-    let requestedFields = getFields().forIds(
-        request.fields.map(function (field) {
-            return field.name
-        })
-    )
+    // let requestedFields = getFields().forIds(
+    //     request.fields.map(function (field) {
+    //         return field.name
+    //     })
+    // )
 
     try {
 
@@ -184,7 +184,7 @@ function getData(request:getDataRequest) {
     }
 
     return {
-        schema: requestedFields.build(),
+        schema: cc.getFields().build(),
         data:outData
     }
 }
