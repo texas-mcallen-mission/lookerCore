@@ -25,10 +25,10 @@ function getAuthType() {
 function getConfig() {
     // https://developers.google.com/looker-studio/connector/reference#configtype
     const config = cc.getConfig();
-
-    config.newInfo().setId('sheetId').setText("Enter Sheet ID");
-    config.newTextInput().setId("package").setName("Please Enter a sheet id").setHelpText("I dunno what I'm doing").setPlaceholder("aaaaaa");
-
+    const sheetCoreConfigDemo = "timestamp:0,\nareaId:1\n"
+    config.newInfo().setId('setup-main').setText("Single Sheet Setup");
+    config.newTextInput().setId("sheetId").setName("Spreadsheet ID").setHelpText("The last string of characters in the URL for your spreadsheet").setPlaceholder("25-lOnG-BuNcHa-CH4rAct3RZ");
+    config.newTextArea().setId("sheetCoreColumns").setName("SheetCore Column Config").setHelpText("your sheetCore columnConfig").setPlaceholder(sheetCoreConfigDemo)
     return config.build();
 }
 
@@ -47,6 +47,10 @@ function getSchema(request) {
 
 
 function getData(request:getDataRequest) {
+    // first step: load up config data
+    const configData = request.configParams
+    cc.newUserError().setDebugText("DU_USER:" + JSON.stringify(configData)).setText("current config").throwException()
+    
     
 }
 
