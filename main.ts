@@ -114,10 +114,39 @@ function getAuthType() {
     return cc.newAuthTypeResponse().setAuthType(AuthTypes.NONE).build();
 }
 
+interface firstRequestConfig {
+    sheetId:string,
+    tabName:string,
+    headerRow:number,
+    use_softColumns:boolean,
+    sheetCoreColumns:string // gets converted to JSON
+}
 
-function getConfig() {
+function convertToFirstRequest_(request:object):firstRequestConfig{
+    const output:firstRequestConfig = {
+        sheetId: '',
+        tabName: '',
+        headerRow: 0,
+        use_softColumns: false,
+        sheetCoreColumns: '',
+        ...request
+    }
+
+    return output
+}
+
+const COLUMN_ID_PREFIX = "column_id_"
+
+const DATA_TYPE_OPTIONS = {"NUMBER":"Number","TEXT":"Text","DATE_TIME":"Date Time","DATE":"Date","BOOLEAN":"Boolean"}
+
+function getConfig(request) {
+    const configParams = request["configParams"]
+    const isFirstRequest = configParams === undefined
     // https://developers.google.com/looker-studio/connector/reference#configtype
     const config = cc.getConfig();
+    if(isFirstRequest){
+        config.setIsSteppedConfig(true)
+    }
     const sheetCoreConfigDemo = "{\n    timestamp:0,\n    areaId:1\n}"
     config.newInfo().setId('setup-main').setText("Single Sheet Setup");
     config.newTextInput().setId("sheetId").setName("Spreadsheet ID").setHelpText("The last string of characters in the URL for your spreadsheet").setPlaceholder("25-lOnG-BuNcHa-CH4rAct3RZ");
@@ -125,6 +154,38 @@ function getConfig() {
     config.newTextInput().setId("headerRow").setName("Header Row Position").setHelpText("Zero-indexed header row position").setPlaceholder(0)
     config.newCheckbox().setId("use_softColumns").setName("Use Softcoded Columns").setHelpText("If you think your underlying data might get a column or two in the future and you want it to automatically show up, set this to true.")
     config.newTextArea().setId("sheetCoreColumns").setName("SheetCore Column Config").setHelpText("your sheetCore columnConfig").setPlaceholder(sheetCoreConfigDemo)
+
+    const typedConfig = convertToFirstRequest_(request)
+    
+    if(!isFirstRequest){
+        //step one: verify that sheets are accessible, and that the given column config is valid.
+        try {
+            SpreadsheetApp.openById(typedConfig.sheetId)
+        } catch (error) {
+            cc.newUserError().setDebugText("Unable to access spreadsheet").setText("Unable to access spreadsheet!").throwException()
+        }
+        try {
+             {
+                JSON.parse(typedConfig.sheetCoreColumns)
+            }
+        } catch (error) {
+            cc.newUserError().setDebugText("JSON Parsing Error:" + error).setText("JSON Parsing Error: Please note that JSON spec requires double quotes around all keys\n" + error).throwException()
+
+        }
+        // at this point, we should be able to guarantee that things will at least mostly work.
+        const columnConfig:columnConfig = JSON.parse(typedConfig.sheetCoreColumns)
+
+        const columnKeys = Object.keys(columnConfig)
+
+        for(const column of columnKeys){
+            const option = config.newSelectSingle().setId(COLUMN_ID_PREFIX+column).setName(column)
+            for(const entry in DATA_TYPE_OPTIONS){
+                option.addOption(config.newOptionBuilder().setLabel(DATA_TYPE_OPTIONS[entry]).setValue(entry))
+            }
+        }
+
+    }
+
     return config.build();
 }
 
