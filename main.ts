@@ -274,9 +274,9 @@ function getData(request: getDataRequest) {
     }
 
     getFields(fields, culledColumns)
-    for (const fieldId of fieldIds) {
-        fields = _getField(fields, fieldId)
-    }
+    // for (const fieldId of fieldIds) {
+    //     fields = _getField(fields, fieldId)
+    // }
     // fieldIds.forEach(fieldId => {
     //     fields = _getField(fields, fieldId);
     // });
