@@ -127,8 +127,10 @@ interface convertedConfigData {
 }
 
 interface columnData {
-    [index:string]:"NUMBER"|"TEXT"|"DATE_TIME"|"DATE"|"BOOLEAN" // these are the types accessible via the dropdown
+    [index:string]: supportedTypes // these are the types accessible via the dropdown
 }
+
+type supportedTypes = "NUMBER" | "TEXT" | "DATE_TIME" | "DATE" | "BOOLEAN"
 
 function convertToConfigData(configParams: object): convertedConfigData{
     // Because there doesn't seem to be a way to nest things in the data studio configurator
@@ -248,6 +250,61 @@ function generateBetterData(columnData: columnData): kiDataEntry[]{
                     break;
             }
         }
+        output.push(outEntry)
+    }
+
+    return output
+}
+
+function dateConversion(value: any, type: "DATE" | "DATE_TIME"): string{
+    let output = ""
+    let date = new Date()
+    let day = String(date.getDay()+1)
+    if (day.length === 1) {
+        day = "0" + day
+    }
+    output += date.getFullYear() + " " + date.getMonth() + " " + day
+    if (type == "DATE_TIME") {
+        output += " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getMilliseconds() 
+    }
+
+    return output
+
+}
+
+function convertItemToEntry(value, type:supportedTypes) {
+    
+    switch (type) {
+        case "BOOLEAN":
+            return Boolean(value)
+            break;
+        case "NUMBER":
+            return +value
+            break;
+        case "TEXT":
+            return String(value);
+            break;
+        case "DATE":
+            return dateConversion(value,"DATE");
+            break;
+        case "DATE_TIME":
+            return dateConversion(value,"DATE_TIME");
+            break;
+        
+        default:
+            return null
+            break;
+    }
+}
+
+function enforceDataConsistency(kiData: kiDataEntry[], columnData: columnData): kiDataEntry[]{
+    const output:kiDataEntry[]= []
+    for (const kiDataEntry of kiData) {
+        const outEntry:kiDataEntry = {}
+        for (const key in kiDataEntry) {
+            outEntry[key] = convertItemToEntry(kiDataEntry[key], columnData[key])
+        }
+        output.push(outEntry)
     }
 
     return output
@@ -281,7 +338,8 @@ function getData(request: getDataRequest) {
     //     fields = _getField(fields, fieldId);
     // });
 
-    const kiData = generateBetterData(culledColumns);
+    const preModifyKiData = generateBetterData(culledColumns);
+    const kiData = enforceDataConsistency(preModifyKiData, unCulledColumns)
     let dataOut: { values: (string | number)[] }[] = []
     
     for(let entry of kiData){
