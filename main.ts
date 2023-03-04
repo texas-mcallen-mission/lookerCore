@@ -151,12 +151,12 @@ function getConfig(request) {
     config.newInfo().setId('setup-main').setText("Single Sheet Setup");
     config.newTextInput().setId("sheetId").setName("Spreadsheet ID").setHelpText("The last string of characters in the URL for your spreadsheet").setPlaceholder("25-lOnG-BuNcHa-CH4rAct3RZ");
     config.newTextInput().setId("tabName").setName("Spreadsheet Tab Name").setHelpText("The name of the tab you're trying to access").setPlaceholder("demoData")
-    config.newTextInput().setId("headerRow").setName("Header Row Position").setHelpText("Zero-indexed header row position").setPlaceholder(0)
+    config.newTextInput().setId("headerRow").setName("Header Row Position").setHelpText("Zero-indexed header row position").setPlaceholder("0")
     config.newCheckbox().setId("use_softColumns").setName("Use Softcoded Columns").setHelpText("If you think your underlying data might get a column or two in the future and you want it to automatically show up, set this to true.")
     config.newTextArea().setId("sheetCoreColumns").setName("SheetCore Column Config").setHelpText("your sheetCore columnConfig").setPlaceholder(sheetCoreConfigDemo)
 
-    const typedConfig = convertToFirstRequest_(request)
-    
+    const typedConfig = convertToFirstRequest_(request.configParams)
+    console.log(typedConfig)
     if(!isFirstRequest){
         //step one: verify that sheets are accessible, and that the given column config is valid.
         try {
@@ -165,7 +165,7 @@ function getConfig(request) {
             cc.newUserError().setDebugText("Unable to access spreadsheet").setText("Unable to access spreadsheet!").throwException()
         }
         try {
-             {
+            {
                 JSON.parse(typedConfig.sheetCoreColumns)
             }
         } catch (error) {
@@ -218,6 +218,7 @@ function testGetData() {
             sheetCoreColumns: "{areaName: 0,log: 1,areaEmail: 2,isDuplicate: 3,formTimestamp: 4,areaID: 5,kiDate: 6,np: 7,sa: 8,bd: 9,bc: 10,rca: 11,rc: 12,cki: 13}"
         },
     };
+    //@ts-ignore this is on purpose for testing.
     const test = getData(requestPartial);
     console.log(test);
 }
