@@ -222,14 +222,58 @@ function generateData(): kiDataEntry[]{
     return output
 }
 
+function generateBetterData(columnData: columnData): kiDataEntry[]{
+    const output = []
 
+    for (let i = 0; i < 20; i++){
+        const outEntry: kiDataEntry = {}
+        for (let column in columnData) {
+            switch (columnData[column]) {
+                case "BOOLEAN":
+                    outEntry[column] = true
+                    break;
+                case "NUMBER":
+                    outEntry[column] = Math.floor(Math.random() * 20);
+                    break;
+                case "DATE":
+                    outEntry[column] = new Date();
+                    break;
+                case "DATE_TIME":
+                    outEntry[column] = new Date();
+                    break;
+                case "TEXT":
+                    outEntry[column] = "AAA" + Math.floor(Math.random() * 1000);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    return output
+}
 
 function getData(request: getDataRequest) {
     //following a guide from Medium.  Wish me luck.
     // https://medium.com/analytics-vidhya/creating-a-google-data-studio-connector-da7b35c6f8d5
     // https://developers.google.com/looker-studio/connector/reference#default
     let fields = cc.getFields();
-    const fieldIds = request.fields.map(field => field.name);
+    // get config data back out:
+    let configParams = request["configParams"];
+
+    
+    let configData = convertToConfigData(configParams);
+    let unCulledColumns = configData.columnTypes
+
+    const fieldIds:string[] = request.fields.map(field => field.name);
+    
+    let culledColumns: columnData = {}
+    
+    for (const fieldId of fieldIds) {
+        culledColumns[fieldId] = unCulledColumns[fieldId]
+    }
+
+    getFields(fields, culledColumns)
     for (const fieldId of fieldIds) {
         fields = _getField(fields, fieldId)
     }
@@ -237,7 +281,7 @@ function getData(request: getDataRequest) {
     //     fields = _getField(fields, fieldId);
     // });
 
-    const kiData = generateData();
+    const kiData = generateBetterData(culledColumns);
     let dataOut: { values: (string | number)[] }[] = []
     
     for(let entry of kiData){
