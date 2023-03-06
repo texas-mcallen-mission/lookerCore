@@ -427,9 +427,9 @@ function getData(request: getDataRequest) {
     // const testOutput = []
 
     // stick data in cache if it wasn't there:
-    if (reCache == true) {
-        putDataInCache(cacheString, kiData, 15)
-    }
+    // if (reCache == true) {
+    //     putDataInCache(cacheString, kiData, 15)
+    // }
 
     return {
         schema: fields.build(),
