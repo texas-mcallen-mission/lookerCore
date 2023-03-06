@@ -180,10 +180,14 @@ function getFields(fields:GoogleAppsScript.Data_Studio.Fields, columns: columnDa
                 addDimension_(fields).setId(key).setType(dsTypes.BOOLEAN);
                 break;
             case "DATE":
-                addDimension_(fields).setId(key).setType(dsTypes.TEXT);
+                addDimension_(fields).setId(key).setType(dsTypes.TEXT); 
+                // for whatever reason, setting this as dsTypes.YEAR_MONTH_DAY breaks it. 🤷‍♀️
+                // But the schema autodetect thing works anywho...
                 break;
             case "DATE_TIME":
-                addDimension_(fields).setId(key).setType(dsTypes.TEXT);
+                addDimension_(fields).setId(key).setType(dsTypes.TEXT); 
+                // for whatever reason, setting this as dsTypes.YEAR_MONTH_DAY_SECOND breaks it. 🤷‍♀️
+                // schema autodetect still works, though, which is nice.
                 break;
             case "TEXT":
                 addDimension_(fields).setId(key).setType(dsTypes.TEXT);
@@ -223,6 +227,7 @@ function generateData(): kiDataEntry[]{
     }
     return output
 }
+
 
 function generateBetterData(columnData: columnData): kiDataEntry[]{
     const output = []
