@@ -263,9 +263,25 @@ function dateConversion(value: any, type: "DATE" | "DATE_TIME"): string{
     if (day.length === 1) {
         day = "0" + day
     }
-    output += date.getFullYear() + date.getMonth()+day
+    let month = String(date.getMonth())
+    if (month.length === 1) {
+        month = "0" + month
+    }
+    output += date.getFullYear() + month + day
     if (type == "DATE_TIME") {
-        output += " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getMilliseconds() 
+        let hours = String(date.getHours())
+        if (hours.length === 1) {
+            hours = "0"+hours
+        }
+        let minutes = String(date.getMinutes())
+        if (minutes.length === 1) {
+            minutes = "0"+minutes
+        }
+        let seconds = String(date.getSeconds())
+        if (seconds.length === 1) {
+            seconds = "0"+seconds
+        }
+        output += hours+minutes +seconds  //+ date.getMilliseconds() 
     }
 
     return output
