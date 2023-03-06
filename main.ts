@@ -263,7 +263,7 @@ function dateConversion(value: any, type: "DATE" | "DATE_TIME"): string{
     if (day.length === 1) {
         day = "0" + day
     }
-    output += date.getFullYear() + " " + date.getMonth() + " " + day
+    output += date.getFullYear() + date.getMonth()+day
     if (type == "DATE_TIME") {
         output += " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getMilliseconds() 
     }
