@@ -353,6 +353,9 @@ function deleteCache(cacheString: string) {
     userCache.remove("LOOKER_CORE_SHEET_STUFF")
 }
 
+// function getDataFromSheetCore_()
+
+
 function getData(request: getDataRequest) {
     //following a guide from Medium.  Wish me luck.
     // https://medium.com/analytics-vidhya/creating-a-google-data-studio-connector-da7b35c6f8d5
@@ -383,7 +386,25 @@ function getData(request: getDataRequest) {
     let reCache:boolean = false // if there isn't data here, then we'll go and toss data back into the cache.
     if (!postKiData) {
         // if postKiData is void, then load the data again. 
-        postKiData = generateBetterData(unCulledColumns)
+        // postKiData = generateBetterData(unCulledColumns)
+        let sheetCoreConfig: sheetDataEntry = {
+            tabName: configData.tabName,
+            headerRow: configData.headerRow,
+            initialColumnOrder: JSON.parse(configData.sheetCoreColumns),
+            includeSoftcodedColumns: configData.use_softColumns,
+            sheetId:configData.sheetId
+        }
+        try {
+            let sheetData = new SheetData(new RawSheetData(sheetCoreConfig))
+            let data = sheetData.getData()
+            postKiData = data
+            
+        } catch (error) {
+            console.log("Error when loading sheetCore")
+            cc.newUserError().setDebugText("Unable to access spreadsheet").setText("Unable to access spreadsheet!").throwException();
+            throw error            
+        }
+
         reCache = true
     }
 
