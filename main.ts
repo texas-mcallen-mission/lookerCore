@@ -331,21 +331,43 @@ function enforceDataConsistency(kiData: kiDataEntry[], columnData: columnData): 
     return output
 }
 
-function getDataFromCache_(cacheString:string):kiDataEntry[]|void {
-    let userCache = CacheService.getUserCache()
-    let test = userCache.get(cacheString)
-    if (test != null && test.length != 0) {
-        let data = JSON.parse(test)
-        console.log(data, data[0])
-        return data
+function getDataFromCache_(cacheString: string): kiDataEntry[] | void {
+    try {
+        return retrieveFromCache(cacheString)
+    } catch (error) {
+        console.error(error)
+        return
     }
+    // let userCache = CacheService.getUserCache()
+    // let test = userCache.get(cacheString)
+    // if (test != null && test.length != 0) {
+    //     let data = JSON.parse(test)
+    //     console.log(data, data[0])
+    //     return data
+    // }
     
 }
 
-function putDataInCache(cacheString: string, kiData: kiDataEntry,expirationInMinutes:number) {
+function putDataInCache(cacheString: string, kiData: kiDataEntry[],expirationInMinutes:number) {
     let userCache = CacheService.getUserCache()
-    let dataConvert = JSON.stringify(kiData)
+    let cacheKeys = fancyPantsCacher_(cacheString, kiData, expirationInMinutes)
+    let dataConvert = JSON.stringify(cacheKeys)
     userCache.put(cacheString,dataConvert,expirationInMinutes*60)
+}
+
+function retrieveFromCache(cacheString: string):kiDataEntry[] {
+    const userCache = CacheService.getUserCache()
+    let cacheKeys :string[]= JSON.parse(userCache.get(cacheString))
+    let rawData = userCache.getAll(cacheKeys)
+    let outputData: kiDataEntry[] = []
+    
+    for (let key in rawData) {
+        let kiData:kiDataEntry[] = JSON.parse(rawData[key])
+        outputData.push(...kiData)
+    }
+
+    return outputData
+    
 }
 
 function deleteCache(cacheString: string) {
@@ -354,6 +376,41 @@ function deleteCache(cacheString: string) {
 }
 
 // function getDataFromSheetCore_()
+
+
+
+// returns the array of strings that data is stored at.
+function fancyPantsCacher_(cacheBaseString: string, kiData: kiDataEntry[],expirationInMinutes:number): string[]{
+    const output: string[] = []
+    
+    // max number of things that can be cached is 1k.
+    const num_of_entries = 900
+    let userCache = CacheService.getUserCache()
+    if (kiData.length < num_of_entries) {
+        for (let i = 0; i < kiData.length; i++){
+            let outString = cacheBaseString + "_" + i
+            userCache.put(outString, JSON.stringify(kiData[i]), expirationInMinutes*60)
+            output.push(outString)
+        }
+    } else {
+        let outputs: manyKiDataEntries = {}
+        for (let i = 0; i < kiData.length; i++){
+            if (!Object.prototype.hasOwnProperty.call(outputs, String(i))) {
+                outputs[i] = []
+            }
+            outputs[i%num_of_entries].push(kiData[i])
+        }
+        for (let entry in outputs) {
+            let outString = cacheBaseString + "_" + entry
+            userCache.put(outString, JSON.stringify(outputs[entry]), expirationInMinutes * 60)
+            output.push(outString)
+        }
+    }
+
+    return output
+}
+
+
 
 
 function getData(request: getDataRequest) {
