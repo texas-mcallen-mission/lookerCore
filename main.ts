@@ -6,6 +6,9 @@
 // currently following this guide: https://developers.google.com/looker-studio/connector/build
 // not sure exactly what the data format is supposed to look like yet.
 
+// This works if you disable caching, but at that point, the speed is *abysmal*.  
+// Probably needs some sorta external caching service like S3 or something to go fast enough to be worth it.
+
 const cc = DataStudioApp.createCommunityConnector();
 
 const dsTypes = cc.FieldType
