@@ -331,6 +331,23 @@ function enforceDataConsistency(kiData: kiDataEntry[], columnData: columnData): 
     return output
 }
 
+function getDataFromCache_(cacheString:string):kiDataEntry[]|void {
+    let userCache = CacheService.getUserCache()
+    let test = userCache.get(cacheString)
+    if (test != null && test.length != 0) {
+        let data = JSON.parse(test)
+        console.log(data, data[0])
+        return data
+    }
+    
+}
+
+function putDataInCache(cacheString: string, kiData: kiDataEntry,expirationInMinutes:number) {
+    let userCache = CacheService.getUserCache()
+    let dataConvert = JSON.stringify(kiData)
+    userCache.put(cacheString,dataConvert,expirationInMinutes*60)
+}
+
 function getData(request: getDataRequest) {
     //following a guide from Medium.  Wish me luck.
     // https://medium.com/analytics-vidhya/creating-a-google-data-studio-connector-da7b35c6f8d5
@@ -352,15 +369,22 @@ function getData(request: getDataRequest) {
     }
 
     getFields(fields, culledColumns)
-    // for (const fieldId of fieldIds) {
-    //     fields = _getField(fields, fieldId)
-    // }
-    // fieldIds.forEach(fieldId => {
-    //     fields = _getField(fields, fieldId);
-    // });
 
-    const preModifyKiData = generateBetterData(culledColumns);
-    const kiData = enforceDataConsistency(preModifyKiData, unCulledColumns)
+
+    // const preModifyKiData = generateBetterData(culledColumns);
+
+    let cacheString = "LOOKER_CORE_SHEET_STUFF"
+    let postKiData: kiDataEntry[] | void = getDataFromCache_(cacheString)
+    let reCache:boolean = false // if there isn't data here, then we'll go and toss data back into the cache.
+    if (!postKiData) {
+        // if postKiData is void, then load the data again. 
+        postKiData = generateBetterData(culledColumns)
+        reCache = true
+    }
+
+
+
+    const kiData = enforceDataConsistency(postKiData, unCulledColumns)
     let dataOut: { values: (string | number)[] }[] = []
     
     for(let entry of kiData){
@@ -375,6 +399,11 @@ function getData(request: getDataRequest) {
     console.log(Object.keys(kiData[0]))
     console.log
     // const testOutput = []
+
+    // stick data in cache if it wasn't there:
+    if (reCache == true) {
+        putDataInCache(cacheString, kiData, 15)
+    }
 
     return {
         schema: fields.build(),
