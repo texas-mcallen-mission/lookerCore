@@ -180,10 +180,10 @@ function getFields(fields:GoogleAppsScript.Data_Studio.Fields, columns: columnDa
                 addDimension_(fields).setId(key).setType(dsTypes.BOOLEAN);
                 break;
             case "DATE":
-                addDimension_(fields).setId(key).setType(dsTypes.TEXT);
+                addDimension_(fields).setId(key).setType(dsTypes.YEAR_MONTH_DAY);
                 break;
             case "DATE_TIME":
-                addDimension_(fields).setId(key).setType(dsTypes.TEXT);
+                addDimension_(fields).setId(key).setType(dsTypes.YEAR_MONTH_DAY_SECOND);
                 break;
             case "TEXT":
                 addDimension_(fields).setId(key).setType(dsTypes.TEXT);
