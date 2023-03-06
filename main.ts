@@ -414,6 +414,12 @@ function getData(request: getDataRequest) {
 
 }
 
+function readCache() {
+    let userCache = CacheService.getUserCache()
+    console.log(userCache.get("LOOKER_CORE_SHEET_STUFF"))
+    console.log(JSON.parse(userCache.get("LOOKER_CORE_SHEET_STUFF")))
+}
+
 
 
 /*
