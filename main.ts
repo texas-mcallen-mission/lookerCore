@@ -348,6 +348,11 @@ function putDataInCache(cacheString: string, kiData: kiDataEntry,expirationInMin
     userCache.put(cacheString,dataConvert,expirationInMinutes*60)
 }
 
+function deleteCache(cacheString: string) {
+    let userCache = CacheService.getUserCache()
+    userCache.remove("LOOKER_CORE_SHEET_STUFF")
+}
+
 function getData(request: getDataRequest) {
     //following a guide from Medium.  Wish me luck.
     // https://medium.com/analytics-vidhya/creating-a-google-data-studio-connector-da7b35c6f8d5
@@ -378,7 +383,7 @@ function getData(request: getDataRequest) {
     let reCache:boolean = false // if there isn't data here, then we'll go and toss data back into the cache.
     if (!postKiData) {
         // if postKiData is void, then load the data again. 
-        postKiData = generateBetterData(culledColumns)
+        postKiData = generateBetterData(unCulledColumns)
         reCache = true
     }
 
