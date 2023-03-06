@@ -382,7 +382,7 @@ function getData(request: getDataRequest) {
     // const preModifyKiData = generateBetterData(culledColumns);
 
     let cacheString = "LOOKER_CORE_SHEET_STUFF"
-    let postKiData: kiDataEntry[] | void = getDataFromCache_(cacheString)
+    let postKiData: kiDataEntry[] | void //= getDataFromCache_(cacheString)
     let reCache:boolean = false // if there isn't data here, then we'll go and toss data back into the cache.
     if (!postKiData) {
         // if postKiData is void, then load the data again. 
